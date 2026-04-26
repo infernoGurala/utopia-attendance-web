@@ -1,1 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendance — UTOPIA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #0f0f17;
+    --surface: #13131e;
+    --surface2: #1a1a28;
+    --border: rgba(255,255,255,0.06);
+    --border-bright: rgba(255,255,255,0.12);
+    --text: #f0f0f8;
+    --text-muted: rgba(240,240,248,0.45);
+    --text-dim: rgba(240,240,248,0.25);
+    --accent: #c084fc;
+    --accent-glow: rgba(192,132,252,0.15);
+    --green: #4ade80;
+    --green-glow: rgba(74,222,128,0.12);
+    --yellow: #fbbf24;
+    --yellow-glow: rgba(251,191,36,0.12);
+    --red: #f87171;
+    --red-glow: rgba(248,113,113,0.12);
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --radius: 20px;
+    --radius-sm: 12px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -20vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80vw;
+    height: 60vh;
+    background: radial-gradient(ellipse, rgba(192,132,252,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── VIEWS ── */
+  .view { display: none; min-height: 100vh; position: relative; z-index: 1; }
+  .view.active { display: flex; flex-direction: column; }
+
+  /* ── LOGIN VIEW ── */
+  #view-login {
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-radius: 28px;
+    padding: 40px 36px;
+    backdrop-filter: blur(20px);
+    animation: slideUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  .login-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .login-logo-mark {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent), #818cf8);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 16px;
+    color: white;
+  }
+
+  .login-logo-text {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.02em;
+  }
+
+  .login-title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+
+  .login-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+  }
+
+  .field {
+    margin-bottom: 16px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .field input, .field select {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+
+  .field input:focus, .field select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  .field select option { background: #1a1a28; }
+
+  .btn-primary {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent), #818cf8);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: white;
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    padding: 16px;
+    cursor: pointer;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.2s;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(192,132,252,0.3); }
+  .btn-primary:hover::before { opacity: 1; }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .error-msg {
+    background: rgba(248,113,113,0.1);
+    border: 1px solid rgba(248,113,113,0.2);
+    border-radius: var(--radius-sm);
+    color: var(--red);
+    font-size: 13px;
+    padding: 12px 14px;
+    margin-top: 12px;
+    display: none;
+  }
+  .error-msg.show { display: block; animation: slideUp 0.3s ease both; }
+
+  /* ── LOADING VIEW ── */
+  #view-loading {
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .loader-ring {
+    width: 52px;
+    height: 52px;
+    border: 2px solid var(--border-bright);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .loader-text {
+    font-size: 15px;
+    color: var(--text-muted);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  /* ── DASHBOARD VIEW ── */
+  #view-dashboard { padding-bottom: 40px; }
+
+  .dash-header {
+    padding: 20px 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    z-index: 10;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dash-header-left { display: flex; flex-direction: column; gap: 2px; }
+
+  .dash-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .dash-subtitle { font-size: 12px; color: var(--text-muted); }
+
+  .dash-actions { display: flex; gap: 8px; }
+
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    font-size: 16px;
+  }
+
+  .icon-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--border-bright); }
+
+  .dash-content { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+
+  /* Hero card */
+  .hero-card {
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-radius: 24px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.5s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  .hero-card::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    opacity: 0.06;
+    filter: blur(40px);
+  }
+
+  .hero-card.good::before { background: var(--green); }
+  .hero-card.warn::before { background: var(--yellow); }
+  .hero-card.bad::before { background: var(--red); }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+
+  .hero-badge.good { background: var(--green-glow); color: var(--green); }
+  .hero-badge.warn { background: var(--yellow-glow); color: var(--yellow); }
+  .hero-badge.bad { background: var(--red-glow); color: var(--red); }
+
+  .hero-pct {
+    font-family: var(--font-display);
+    font-size: 56px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-pct.good { color: var(--green); }
+  .hero-pct.warn { color: var(--yellow); }
+  .hero-pct.bad { color: var(--red); }
+
+  .hero-meta { font-size: 14px; color: var(--text-muted); margin-bottom: 4px; }
+
+  .hero-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .hero-name svg { opacity: 0.5; flex-shrink: 0; }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    animation: slideUp 0.5s 0.05s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px;
+  }
+
+  .stat-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .stat-value { font-family: var(--font-display); font-size: 22px; font-weight: 700; }
+
+  /* Section header */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    animation: slideUp 0.5s 0.1s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .section-sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+  /* Subject cards */
+  .subjects-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .subject-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 18px;
+    animation: slideUp 0.5s cubic-bezier(0.16,1,0.3,1) both;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+  }
+
+  .subject-card:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-1px);
+  }
+
+  .subject-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .subject-left { display: flex; align-items: center; gap: 12px; }
+
+  .subject-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: var(--font-display);
+    flex-shrink: 0;
+  }
+
+  .subject-icon.good { background: var(--green-glow); color: var(--green); }
+  .subject-icon.warn { background: var(--yellow-glow); color: var(--yellow); }
+  .subject-icon.bad { background: var(--red-glow); color: var(--red); }
+
+  .subject-name {
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  .subject-classes { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .subject-pct {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .subject-pct.good { color: var(--green); }
+  .subject-pct.warn { color: var(--yellow); }
+  .subject-pct.bad { color: var(--red); }
+
+  /* Progress bar */
+  .progress-track {
+    height: 4px;
+    background: var(--bg2);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  .progress-fill.good { background: var(--green); }
+  .progress-fill.warn { background: var(--yellow); }
+  .progress-fill.bad { background: linear-gradient(90deg, var(--red), #fb923c); }
+
+  .subject-hint {
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  .subject-hint.good { color: var(--green); }
+  .subject-hint.warn { color: var(--yellow); }
+  .subject-hint.bad { color: var(--red); }
+
+  /* ── ERROR VIEW ── */
+  #view-error {
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .error-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--red-glow);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+  }
+
+  .error-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .error-desc { font-size: 14px; color: var(--text-muted); max-width: 280px; line-height: 1.6; }
+
+  .btn-back {
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 12px 24px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+  }
+
+  .btn-back:hover { background: var(--surface2); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  /* Desktop */
+  @media (min-width: 768px) {
+    #view-dashboard { max-width: 640px; margin: 0 auto; width: 100%; }
+    .dash-content { padding: 28px; }
+    .dash-header { max-width: 640px; margin: 0 auto; width: 100%; left: 50%; transform: translateX(-50%); }
+    .hero-pct { font-size: 68px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="view active" id="view-login">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">U</div>
+      <span class="login-logo-text">UTOPIA</span>
+    </div>
+    <div class="login-title">Check your attendance</div>
+    <div class="login-sub">Sign in with your university portal credentials</div>
+
+    <div class="field">
+      <label>Roll Number</label>
+      <input type="text" id="inp-roll" placeholder="e.g. 24B11EC042" autocomplete="username" autocapitalize="characters" spellcheck="false">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="inp-pass" placeholder="Your portal password" autocomplete="current-password">
+    </div>
+    <div class="field">
+      <label>College</label>
+      <select id="inp-college">
+        <option value="acet">ACET — Aditya College of Engg & Technology</option>
+        <option value="aus">AUS — Aditya University</option>
+      </select>
+    </div>
+
+    <button class="btn-primary" id="btn-login">Fetch Attendance</button>
+    <div class="error-msg" id="login-error"></div>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="view" id="view-loading">
+  <div class="loader-ring"></div>
+  <div class="loader-text" id="loader-text">Signing in to portal…</div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="view" id="view-dashboard">
+  <div class="dash-header">
+    <div class="dash-header-left">
+      <div class="dash-title">Attendance</div>
+      <div class="dash-subtitle">Overview</div>
+    </div>
+    <div class="dash-actions">
+      <button class="icon-btn" id="btn-refresh" title="Refresh">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-logout" title="Sign out">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="dash-content">
+    <!-- Hero -->
+    <div class="hero-card" id="hero-card">
+      <div class="hero-badge" id="hero-badge">●&nbsp;<span id="hero-status-text"></span></div>
+      <div class="hero-pct" id="hero-pct">—</div>
+      <div class="hero-meta" id="hero-meta"></div>
+      <div class="hero-name">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span id="hero-name"></span>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Classes</div>
+        <div class="stat-value" id="stat-total">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Attended</div>
+        <div class="stat-value" id="stat-attended">—</div>
+      </div>
+    </div>
+
+    <!-- Subjects -->
+    <div class="section-header">
+      <div>
+        <div class="section-title">Subjects</div>
+        <div class="section-sub">Subject-wise attendance snapshot</div>
+      </div>
+    </div>
+
+    <div class="subjects-list" id="subjects-list"></div>
+  </div>
+</div>
+
+<!-- ERROR -->
+<div class="view" id="view-error">
+  <div class="error-icon">⚠</div>
+  <div class="error-title" id="error-title">Something went wrong</div>
+  <div class="error-desc" id="error-desc">We couldn't fetch your attendance. Please try again.</div>
+  <button class="btn-back" id="btn-error-back">Go back</button>
+</div>
+
+<script>
+const API = 'https://attendance-api.inferalis.space';
+
+// ── State ──
+let state = { roll: '', pass: '', college: 'acet', data: null };
+
+// ── Helpers ──
+function show(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function classify(pct) {
+  if (pct >= 75) return 'good';
+  if (pct >= 65) return 'warn';
+  return 'bad';
+}
+
+function statusText(pct, subjectCount) {
+  if (pct >= 75) return 'On track';
+  if (pct >= 65) return 'Needs attention';
+  return `${subjectCount} subjects need attention`;
+}
+
+function classesNeeded(attended, total, target = 0.75) {
+  // classes needed to reach target
+  const needed = Math.ceil((target * total - attended) / (1 - target));
+  if (needed <= 0) {
+    // can bunk
+    const canBunk = Math.floor((attended - target * total) / target);
+    return canBunk > 0 ? `Can skip ${canBunk} more classes` : null;
+  }
+  return `Attend ${needed} more classes to reach 75%`;
+}
+
+function initials(name) {
+  return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+}
+
+// ── Render ──
+function renderDashboard(data) {
+  const pct = data.overallPercentage;
+  const cls = classify(pct);
+
+  const heroCard = document.getElementById('hero-card');
+  const heroBadge = document.getElementById('hero-badge');
+  const heroPct = document.getElementById('hero-pct');
+  const heroMeta = document.getElementById('hero-meta');
+  const heroName = document.getElementById('hero-name');
+
+  heroCard.className = 'hero-card ' + cls;
+  heroBadge.className = 'hero-badge ' + cls;
+  document.getElementById('hero-status-text').textContent = statusText(pct, data.subjects.filter(s => s.percentage < 75).length);
+  heroPct.className = 'hero-pct ' + cls;
+  heroPct.textContent = pct.toFixed(1) + '%';
+  heroMeta.textContent = `${data.totalAttended} of ${data.totalClasses} classes attended`;
+  heroName.textContent = data.studentName || 'Student';
+
+  document.getElementById('stat-total').textContent = data.totalClasses;
+  document.getElementById('stat-attended').textContent = data.totalAttended;
+
+  const list = document.getElementById('subjects-list');
+  list.innerHTML = '';
+
+  data.subjects.forEach((s, i) => {
+    const c = classify(s.percentage);
+    const hint = classesNeeded(s.attendedClasses, s.totalClasses);
+    const card = document.createElement('div');
+    card.className = 'subject-card';
+    card.style.animationDelay = `${0.15 + i * 0.04}s`;
+    card.innerHTML = `
+      <div class="subject-top">
+        <div class="subject-left">
+          <div class="subject-icon ${c}">${initials(s.subject)}</div>
+          <div>
+            <div class="subject-name">${s.subject}</div>
+            <div class="subject-classes">${s.attendedClasses} / ${s.totalClasses} classes</div>
+          </div>
+        </div>
+        <div class="subject-pct ${c}">${s.percentage.toFixed(1)}%</div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill ${c}" style="width:0%" data-target="${Math.min(s.percentage, 100)}%"></div>
+      </div>
+      ${hint ? `<div class="subject-hint ${c}">${hint}</div>` : ''}
+    `;
+    list.appendChild(card);
+  });
+
+  // Animate progress bars after paint
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.progress-fill').forEach(el => {
+        el.style.width = el.dataset.target;
+      });
+    });
+  });
+
+  show('view-dashboard');
+}
+
+// ── Fetch ──
+async function fetchAttendance() {
+  show('view-loading');
+  const loaderText = document.getElementById('loader-text');
+  loaderText.textContent = 'Signing in to portal…';
+
+  const messages = ['Signing in to portal…', 'Fetching attendance data…', 'Parsing results…'];
+  let mi = 0;
+  const msgInterval = setInterval(() => {
+    mi = (mi + 1) % messages.length;
+    loaderText.textContent = messages[mi];
+  }, 2000);
+
+  try {
+    const res = await fetch(`${API}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        rollNumber: state.roll,
+        password: state.pass,
+        college: state.college,
+        mode: 'tillNow'
+      })
+    });
+    const json = await res.json();
+    clearInterval(msgInterval);
+
+    if (!json.ok) throw new Error(json.error || 'Login failed');
+    state.data = json.data;
+    renderDashboard(json.data);
+  } catch (e) {
+    clearInterval(msgInterval);
+    document.getElementById('error-title').textContent = 'Couldn\'t fetch attendance';
+    document.getElementById('error-desc').textContent = e.message.includes('credentials')
+      ? 'Your roll number or password is incorrect. Please try again.'
+      : 'The portal might be down or unreachable. Please try again in a moment.';
+    show('view-error');
+  }
+}
+
+// ── Token flow ──
+async function fetchByToken(token) {
+  show('view-loading');
+  document.getElementById('loader-text').textContent = 'Loading your attendance…';
+  try {
+    const res = await fetch(`${API}/attendance?token=${encodeURIComponent(token)}`);
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || 'Token invalid');
+    state.data = json.data;
+    renderDashboard(json.data);
+  } catch (e) {
+    document.getElementById('error-title').textContent = e.message.includes('expired') ? 'Link expired' : 'Invalid link';
+    document.getElementById('error-desc').textContent = 'This attendance link has expired or is no longer valid. Open UTOPIA to generate a new one.';
+    show('view-error');
+  }
+}
+
+// ── Event listeners ──
+document.getElementById('btn-login').addEventListener('click', async () => {
+  const roll = document.getElementById('inp-roll').value.trim().toUpperCase();
+  const pass = document.getElementById('inp-pass').value;
+  const college = document.getElementById('inp-college').value;
+  const errEl = document.getElementById('login-error');
+
+  errEl.classList.remove('show');
+  if (!roll || !pass) {
+    errEl.textContent = 'Please enter your roll number and password.';
+    errEl.classList.add('show');
+    return;
+  }
+
+  state.roll = roll;
+  state.pass = pass;
+  state.college = college;
+  document.getElementById('btn-login').disabled = true;
+  await fetchAttendance();
+  document.getElementById('btn-login').disabled = false;
+});
+
+document.getElementById('inp-pass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btn-login').click();
+});
+
+document.getElementById('btn-refresh').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-refresh');
+  btn.style.animation = 'spin 0.8s linear infinite';
+  await fetchAttendance();
+  btn.style.animation = '';
+});
+
+document.getElementById('btn-logout').addEventListener('click', () => {
+  state = { roll: '', pass: '', college: 'acet', data: null };
+  document.getElementById('inp-pass').value = '';
+  document.getElementById('login-error').classList.remove('show');
+  show('view-login');
+});
+
+document.getElementById('btn-error-back').addEventListener('click', () => show('view-login'));
+
+// ── Init ──
+const params = new URLSearchParams(location.search);
+const token = params.get('token');
+if (token) {
+  fetchByToken(token);
+}
+</script>
+</body>
+</html>
