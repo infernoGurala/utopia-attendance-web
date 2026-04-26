@@ -159,7 +159,7 @@ body {
 .field input::placeholder { color: var(--ink3); font-weight: 400; }
 .field input:focus { border-color: var(--ink); background: var(--surface); box-shadow: 0 0 0 3px var(--ink4); }
 
-/* Updated Button Toggle for College Selection */
+/* Button Toggle for College Selection */
 .college-toggle { display: flex; gap: 8px; }
 .college-toggle input { display: none; }
 .college-toggle label {
@@ -211,7 +211,7 @@ body {
 @keyframes loadSlide { 0%{transform:translateX(-120%)} 100%{transform:translateX(280%)} }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━
-   DASHBOARD (NEW LAYOUT)
+   DASHBOARD
 ━━━━━━━━━━━━━━━━━━━━━━━━ */
 #view-dashboard { padding-bottom: 60px; }
 
@@ -524,6 +524,7 @@ async function doFetch() {
     S.data = json.data;
     renderDashboard(json.data);
   } catch(e) {
+    document.getElementById('err-title').textContent = e.message.includes('credentials') ? 'Wrong credentials' : 'Portal unreachable';
     document.getElementById('err-desc').textContent = e.message.includes('credentials') 
       ? 'Your roll number or password is incorrect.' : 'The portal might be down. Please try again shortly.';
     show('view-error');
