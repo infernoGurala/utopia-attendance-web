@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -86,16 +87,6 @@ body {
 .fade-up { animation: fadeUp 0.5s var(--snappy) both; }
 
 /* theme toggle */
-#theme-toggle {
-  position: fixed; top: 20px; right: 20px; z-index: 999;
-  width: 38px; height: 38px; border-radius: 50%;
-  border: 1px solid var(--line2); background: var(--surface);
-  box-shadow: var(--sh-sm); cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: transform 0.2s var(--ease), background 0.3s;
-  color: var(--ink2);
-}
-#theme-toggle:hover { transform: scale(1.1); color: var(--ink); }
 #theme-toggle svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; }
 .t-sun { display: none; } .t-moon { display: block; }
 [data-theme="dark"] .t-sun { display: block; }
@@ -301,6 +292,7 @@ body {
   border-bottom: 1px solid var(--line);
 }
 .topnav-left { display: flex; align-items: center; gap: 14px; }
+.topnav-actions { display: flex; align-items: center; gap: 6px; }
 .topnav-badge {
   width: 30px; height: 30px;
   background: var(--ink); color: var(--bg);
@@ -514,11 +506,6 @@ body {
 </head>
 <body>
 
-<button id="theme-toggle" aria-label="Toggle theme">
-  <svg class="t-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
-  <svg class="t-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-</button>
-
 <!-- LOGIN VIEW -->
 <div class="view active" id="view-login">
   <div class="login-wrap">
@@ -529,13 +516,13 @@ body {
     <div class="login-card">
       <div class="login-card-header"><div class="wordmark"><div class="wordmark-badge">U</div><span class="wordmark-name">Utopia</span></div><span class="login-card-tag">Sign in</span></div>
       <div class="login-fields">
-        <div class="field"><label>Roll Number</label><input type="text" id="inp-roll" placeholder="e.g. 25B11ME101" autocomplete="username"></div>
+        <div class="field"><label>Roll Number</label><input type="text" id="inp-roll" placeholder="e.g. 25B11ABXXX" autocomplete="username"></div>
         <div class="field"><label>Password</label><input type="password" id="inp-pass" placeholder="Portal password"></div>
         <div class="field">
           <label>College</label>
           <div class="college-toggle">
-            <input type="radio" id="col-acet" name="college" value="acet" checked><label for="col-acet">ACET</label>
-            <input type="radio" id="col-aus" name="college" value="aus"><label for="col-aus">AUS</label>
+<input type="radio" id="col-aus" name="college" value="aus" checked><label for="col-aus">AUS</label>
+<input type="radio" id="col-acet" name="college" value="acet"><label for="col-acet">ACET</label>
           </div>
         </div>
       </div>
@@ -555,9 +542,13 @@ body {
   <div class="topnav">
     <div class="topnav-left"><div class="topnav-badge">U</div><div><div class="page-title">Attendance</div><div class="page-sub">Live insight</div></div></div>
     <div class="topnav-actions">
-      <button class="nav-btn" id="btn-refresh" title="Refresh"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
-      <button class="nav-btn" id="btn-logout" title="Sign out"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
-    </div>
+       <button class="nav-btn" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+         <svg class="t-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+         <svg class="t-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+       </button>
+       <button class="nav-btn" id="btn-refresh" title="Refresh"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+       <button class="nav-btn" id="btn-logout" title="Sign out"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+     </div>
   </div>
   <div class="dash-body">
     <div class="hero-block" id="hero-block">
@@ -586,11 +577,11 @@ function attendanceAdvice(attended, total) {
   const currentPer = (attended / total);
   if (currentPer >= 0.75) {
     const maxSkip = Math.floor((attended - 0.75 * total) / 0.75);
-    if (maxSkip > 0) return `✓ Can skip ${maxSkip} more class${maxSkip > 1 ? 'es' : ''} while staying ≥75%`;
+    if (maxSkip > 0) return `✓ Can skip ${maxSkip} more class/es`;
     return '✓ Exactly at 75% — careful';
   } else {
     const needed = Math.ceil((0.75 * total - attended) / 0.25);
-    return `⚠️ Need ${needed} more consecutive attendance to reach 75%`;
+    return `⚠️ Attend ${needed} more classes to reach 75%`;
   }
 }
 
